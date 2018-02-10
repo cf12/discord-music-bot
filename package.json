@@ -4,5 +4,22 @@
   "main": "src/bot.js",
   "repository": "https://github.com/CF12/discord-guild-bot",
   "author": "CF12 <brianx0011@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "run": "node src/bot.js"
+  },
+  "dependencies": {
+    "bufferutil": "^3.0.3",
+    "chalk": "^2.3.0",
+    "discord.js": "^11.3.0",
+    "erlpack": "hammerandchisel/erlpack",
+    "gdax": "^0.5.1",
+    "lodash": "^4.17.5",
+    "node-opus": "^0.2.7",
+    "time-stamp": "^2.0.0",
+    "uws": "^9.14.0"
+  },
+  "devDependencies": {
+    "standard": "^10.0.3"
+  }
 }
