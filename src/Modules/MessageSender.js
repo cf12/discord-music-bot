@@ -12,7 +12,7 @@ class MessageSender {
     }
   }
 
-  static _msgDeleter (msg, duration) {
+  _msgDeleter (msg, duration) {
     if (duration > 0) msg.delete(duration)
   }
 

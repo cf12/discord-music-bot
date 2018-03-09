@@ -2,8 +2,8 @@ const User = require('./User')
 const VoiceHandler = require('../Modules/VoiceHandler')
 
 class Guild {
-  constructor (id, consoleLogger) {
-    this.cl = consoleLogger
+  constructor (id, bot) {
+    this.cl = bot.modules.consoleLogger
     this.id = id
     this.users = {}
     this.timers = {}

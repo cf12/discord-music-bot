@@ -1,6 +1,6 @@
-exports.handler = (client, msg, args, guild, env, modules) => {
-  const ms = modules.messageSender
-  const pf = env.prefix
+exports.handler = (bot, msg, args, guild) => {
+  const ms = bot.modules.messageSender
+  const pf = bot.env.prefix
 }
 
 exports.info = {

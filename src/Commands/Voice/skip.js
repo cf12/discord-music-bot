@@ -1,7 +1,7 @@
-exports.handler = (client, msg, args, guild, env, modules) => {
-  const ms = modules.messageSender
-  const cl = modules.consoleLogger
-  const pf = env.prefix
+exports.handler = (bot, msg, args, guild) => {
+  const ms = bot.modules.messageSender
+  const cl = bot.modules.consoleLogger
+  const pf = bot.env.prefix
 
   if (args.length !== 0) return ms.error(`Invalid usage: **${pf}skip**`, msg.channel)
   else if (!guild.voiceState.voiceConnection) return ms.error(`Bot is not in voice!`, msg.channel)

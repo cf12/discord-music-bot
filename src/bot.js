@@ -1,45 +1,37 @@
 const Discord = require('discord.js')
-const client = new Discord.Client()
+const moduleLoader = require('./Modules/ModuleLoader')
+let bot = new Discord.Client()
 
 const configs = require('./Modules/ConfigLoader')()
-const env = {
-  prefix: configs.config.prefix
-}
-
-client.login(configs.config.token)
+const pf = configs.config.prefix
+bot.login(configs.config.token)
 
 let modules
-let cl
 
-client.on('ready', () => {
-  client.user.setPresence({
-    game: {
-      name: `v${configs.config.version}`
-    }
-  })
+bot.on('ready', () => {
+  modules = bot.modules = moduleLoader.getModules(bot, configs)
+  bot.env = {
+    prefix: pf
+  }
 
-  modules = require('./Modules/ModuleLoader').getModules(client, configs)
-  cl = modules.consoleLogger
+  bot.user.setPresence({ game: {
+    name: configs.config.version
+  }})
 
+  const cl = modules.consoleLogger
   cl.info('Bot started!')
-  cl.info(`Invite Link: https://discordapp.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot`)
+  cl.info(`Invite Link: https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot`)
 })
 
-client.on('message', (msg) => {
-  if (msg.author.bot || !msg.content.startsWith(env.prefix)) return
+bot.on('message', (msg) => {
+  if (msg.author.bot || !msg.content.startsWith(pf)) return
 
   const baseCmd = msg.content.split(' ')[0]
-
-  const guildState = modules.guildHandler.getGuild(msg.guild.id)
-  const cmd = modules.commandHandler.getCommand(baseCmd.slice(env.prefix.length).toLowerCase())
+  const cmd = modules.commandHandler.getCommand(baseCmd.slice(pf.length).toLowerCase())
 
   if (cmd) {
+    const guildState = modules.guildHandler.getGuild(msg.guild.id)
     const baseArgs = msg.content.split(' ').slice(1)
-    cmd.handler(client, msg, baseArgs, guildState, env, {
-      messageSender: modules.messageSender,
-      consoleLogger: modules.consoleLogger
-    })
-  } else {
-    modules.messageSender.error('Command not found', msg.channel)
-  }
+    cmd.handler(bot, msg, baseArgs, guildState)
+  } else modules.messageSender.error('Command not found', msg.channel)
 })

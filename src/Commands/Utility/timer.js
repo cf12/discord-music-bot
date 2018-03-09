@@ -20,20 +20,20 @@ function formatMiliseconds (time) {
   return `${res.hours}H ${res.minutes}M ${res.seconds}S`
 }
 
-exports.handler = (client, msg, args, guildState, env, modules) => {
-  const ms = modules.messageSender
-  const pf = env.prefix
+exports.handler = (bot, msg, args, guild) => {
+  const ms = bot.modules.messageSender
+  const pf = bot.env.prefix
 
   if (!args.length) return ms.error(`Usage: **${pf}timer <add | list | remove>**`, msg.channel)
   const base = args[0].toUpperCase()
 
   if (base === 'ADD') {
     if (args.length <= 3) return ms.error(`Invalid usage: **${pf}timer add <name> <duration (seconds)> <description>**`, msg.channel)
-    if (args[1] in guildState.timers) return ms.error(`A timer with the name ${args[1]} already exists! Please choose another name.`, msg.channel)
+    if (args[1] in guild.timers) return ms.error(`A timer with the name ${args[1]} already exists! Please choose another name.`, msg.channel)
 
     const description = args.slice(3).join(' ')
 
-    guildState.timers[args[1]] = {
+    guild.timers[args[1]] = {
       name: args[1],
       description: description,
       originalTime: Date.now(),
@@ -46,9 +46,9 @@ exports.handler = (client, msg, args, guildState, env, modules) => {
     if (args.length !== 1) return ms.error(`Invalid usage: **${pf}timer <list>**`)
 
     let res = `No timers found. Create one: **${pf}timer add <name> <duration (seconds)> <description>**`
-    if (!_.isEmpty(guildState.timers)) {
+    if (!_.isEmpty(guild.timers)) {
       res = '**Timers: **\n```'
-      _.values(guildState.timers).forEach((e) => {
+      _.values(guild.timers).forEach((e) => {
         res += `[${formatMiliseconds(e.duration - (Date.now() - e.originalTime))}] ${e.name} - ${e.description}\n`
       })
       res += '```'
@@ -58,10 +58,10 @@ exports.handler = (client, msg, args, guildState, env, modules) => {
   } else if (base === 'REMOVE') {
     if (args.length > 2) return ms.error(`Invalid usage: **${pf}timer remove <name>**`)
 
-    let timer = guildState.timers[args[1]]
-    if (args[1] in guildState.timers) {
+    let timer = guild.timers[args[1]]
+    if (args[1] in guild.timers) {
       clearTimeout(timer.timer)
-      delete guildState.timers[args[1]]
+      delete guild.timers[args[1]]
       ms.info(`Timer **${args[1]}** has been removed`, msg.channel)
     } else ms.error(`Timer **${args[1]} does not exist`)
   } else ms.error('Invalid operation. Valid operations: **ADD, LIST, REMOVE**', msg.channel)

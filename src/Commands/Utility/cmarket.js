@@ -8,8 +8,8 @@ publicClient.getCurrencies((err, res, data) => {
   currencies = data.map(e => e.id)
 })
 
-exports.handler = (client, msg, args, guildState, env, modules) => {
-  const ms = modules.messageSender
+exports.handler = (bot, msg, args, guild) => {
+  const ms = bot.modules.messageSender
 
   args = args.map(e => e.toUpperCase())
 

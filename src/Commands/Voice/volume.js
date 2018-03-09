@@ -1,7 +1,7 @@
-exports.handler = async (client, msg, args, guild, env, modules) => {
-  const cl = modules.consoleLogger
-  const ms = modules.messageSender
-  const pf = env.prefix
+exports.handler = async (bot, msg, args, guild) => {
+  const cl = bot.modules.consoleLogger
+  const ms = bot.modules.messageSender
+  const pf = bot.env.prefix
   const vh = guild.voiceHandler
 
   if (args[0] <= 0 || args[0] > 100) return ms.error('Invalid Volume Input! Value must be between 1 and 100', msg.channel)

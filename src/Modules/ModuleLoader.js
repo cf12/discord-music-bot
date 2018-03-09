@@ -1,14 +1,9 @@
-function getModules (client, configs) {
-  const modules = {
+module.exports.getModules = (bot, configs) => {
+  return {
     consoleLogger: new (require('./ConsoleLogger'))(),
-    commandHandler: new (require('./CommandHandler'))()
+    commandHandler: new (require('./CommandHandler'))(),
+    messageSender: new (require('./MessageSender'))(bot, configs),
+    guildHandler: new (require('./GuildHandler'))(bot),
+    youtubeHandler: new (require('./YoutubeHandler'))(configs.config.ytApiKey)
   }
-
-  modules.messageSender = new (require('./MessageSender'))(client, configs)
-  modules.guildHandler = new (require('./GuildHandler'))(modules)
-  modules.youtubeHandler = new (require('./YoutubeHandler'))(configs.config.ytApiKey)
-
-  return modules
 }
-
-module.exports.getModules = getModules

@@ -1,6 +1,6 @@
-exports.handler = async (client, msg, args, guildState, env, modules) => {
-  const ms = modules.messageSender
-  const pf = env.prefix
+exports.handler = async (bot, msg, args, guildState) => {
+  const ms = bot.modules.messageSender
+  const pf = bot.env.prefix
 
   await guildState.voiceHandler.leaveVoice(ms, msg.channel)
   ms.info('Leaving voice channel...', msg.channel)

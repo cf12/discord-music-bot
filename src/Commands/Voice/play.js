@@ -1,9 +1,8 @@
-exports.handler = async (client, msg, args, guild, env, modules) => {
-  const ms = modules.messageSender
-  const cl = modules.consoleLogger
-  const yh = modules.youtubeHandler
+exports.handler = async (bot, msg, args, guild) => {
+  const ms = bot.modules.messageSender
+  const cl = bot.modules.consoleLogger
+  const pf = bot.env.prefix
   const vh = guild.voiceHandler
-  const pf = env.prefix
 
   if (args.length !== 1) return ms.error(`Invalid usage: **${pf}play <url>**`, msg.channel)
   if (!msg.member.voiceChannel) return ms.error(`${msg.member.toString()}, you must be in a voice channel`, msg.channel)

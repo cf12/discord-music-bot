@@ -24,6 +24,10 @@ class CommandHandler {
   getCommand (query) {
     return this.commands.filter(e => e.info.command === query)[0]
   }
+
+  getCommands () {
+    return this.commands
+  }
 }
 
 module.exports = CommandHandler
