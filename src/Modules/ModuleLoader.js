@@ -1,7 +1,7 @@
 function getModules (client, configs) {
   const modules = {
     consoleLogger: new (require('./ConsoleLogger'))(),
-    commandHandler: new (require('./commandHandler'))()
+    commandHandler: new (require('./CommandHandler'))()
   }
 
   modules.messageSender = new (require('./MessageSender'))(client, configs)
