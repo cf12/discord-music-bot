@@ -13,6 +13,10 @@ class Logger {
   info (msg) {
     console.log(`${chalk.green(this._getTimestamp())} ${chalk.blue('[INFO] >')} ${chalk.yellow(msg)}`)
   }
+
+  error (msg) {
+    console.log(`${chalk.green(this._getTimestamp())} ${chalk.red('[ERROR] >')} ${chalk.yellow(msg)}`)
+  }
 }
 
 module.exports = Logger

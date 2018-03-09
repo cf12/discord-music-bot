@@ -1,7 +1,10 @@
-exports.handler = (client, msg, ms, args, pf, guild, gh) => {
+exports.handler = (client, msg, args, guildState, env, modules) => {
+  const ms = modules.messageSender
+  const pf = env.prefix
+
   if (!args.length) return ms.error(`Invalid usage: **${pf}nickname <nickname>**`, msg.channel)
 
-  const user = guild.getUser(msg.member.id)
+  const user = guildState.getUser(msg.member.id)
 
   if (msg.createdTimestamp - user.history.nicknameChange < (30 * 60 * 1000)) {
     ms.error(`${msg.member.toString()}, you are still on cooldown for your next nickname change.`, msg.channel)

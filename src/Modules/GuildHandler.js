@@ -1,12 +1,13 @@
 const Guild = require('../Components/Guild')
 
 class GuildHandler {
-  constructor () {
+  constructor (modules) {
+    this.modules = modules
     this.guilds = {}
   }
 
   addGuild (id) {
-    this.guilds[id] = new Guild(id)
+    this.guilds[id] = new Guild(id, this.modules)
 
     return this.guilds[id]
   }

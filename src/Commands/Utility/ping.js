@@ -1,4 +1,6 @@
-exports.handler = (client, msg, ms, args, pf, state, gh) => {
+exports.handler = (client, msg, args, guildState, env, modules) => {
+  const ms = modules.messageSender
+
   ms.info('Pong!', msg.channel)
 }
 
