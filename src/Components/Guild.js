@@ -3,7 +3,7 @@ const VoiceHandler = require('../Modules/VoiceHandler')
 
 class Guild {
   constructor (id, bot) {
-    this.cl = bot.modules.consoleLogger
+    this.bot = bot
     this.id = id
     this.users = {}
     this.timers = {}
@@ -17,7 +17,7 @@ class Guild {
       prevTrack: undefined
     }
 
-    this.voiceHandler = new VoiceHandler(this.voiceState, this.cl)
+    this.voiceHandler = new VoiceHandler(this.voiceState, this.bot)
   }
 
   addUser (id) {

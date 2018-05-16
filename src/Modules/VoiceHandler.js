@@ -5,7 +5,9 @@ const ytdl = require('ytdl-core')
 momentDurationFormatSetup(moment)
 
 class VoiceHandler {
-  constructor (voiceState, modules) {
+  constructor (voiceState, bot) {
+    const modules = bot.modules
+
     this.cl = modules.consoleLogger
     this.yh = modules.youtubeHandler
     this.ms = modules.messageSender
@@ -127,7 +129,7 @@ class VoiceHandler {
       this.state.voiceConnection = undefined
       this.state.voiceDispatcher = undefined
       this.state.nowPlaying = undefined
-      this.state.queue = []
+      this.state.que$ue = []
 
       resolve()
     })
@@ -141,6 +143,13 @@ class VoiceHandler {
       if (this.state.voiceDispatcher) this.state.voiceDispatcher.setVolumeLogarithmic(convertedVolume)
 
       resolve(volume)
+    })
+  }
+
+  async skipTrack (msgChannel) {
+    return new Promise(async (resolve, reject) => {
+      this.ms.info('Skipping track...', msgChannel)
+      this.state.voiceDispatcher.end()
     })
   }
 }

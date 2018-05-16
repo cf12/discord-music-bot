@@ -9,10 +9,11 @@ bot.login(configs.config.token)
 let modules
 
 bot.on('ready', () => {
-  modules = bot.modules = moduleLoader.getModules(bot, configs)
   bot.env = {
     prefix: pf
   }
+
+  modules = bot.modules = moduleLoader.getModules(bot, configs)
 
   bot.user.setPresence({ game: {
     name: configs.config.version

@@ -2,13 +2,14 @@ const moment = require('moment')
 const _ = require('lodash')
 
 class MessageSender {
-  constructor (client, configs) {
-    this.profilePicUrl = client.user.avatarURL
+  constructor (bot, configs) {
+    this.profilePicUrl = bot.user.avatarURL
+    this.pf = bot.env.prefix
     this.defaultDuration = 10000
 
     this.footer = {
       icon_url: this.profilePicUrl,
-      text: `| v${configs.config.version} - Developed By CF12`
+      text: `| ${configs.config.version} - Developed By CF12`
     }
   }
 
@@ -19,7 +20,7 @@ class MessageSender {
   info (content, channel, duration = this.defaultDuration) {
     channel.send({
       embed: {
-        title: '__❱❱ INFO ❱❱__',
+        title: ':bulb: __❱❱ INFO ❱❱__',
         description: content,
         color: 5235199, // Light Blue
         footer: this.footer
@@ -30,7 +31,7 @@ class MessageSender {
   error (content, channel, duration = this.defaultDuration) {
     channel.send({
       embed: {
-        title: '__❱❱ ERROR ❱❱__',
+        title: ':warning: __❱❱ ERROR ❱❱__',
         description: content,
         color: 16731983, // Light Red
         footer: this.footer
@@ -41,9 +42,27 @@ class MessageSender {
   volInfo (volume, channel, duration = this.defaultDuration) {
     channel.send({
       embed: {
-        title: '__❱❱ VOLUME ❱❱__',
+        title: ':loud_sound: __❱❱ VOLUME ❱❱__',
         description: `Volume has been set to: **${volume}**`,
         color: 5753896, // Light Green
+        footer: this.footer
+      }
+    }).then(msg => { this._msgDeleter(msg, duration) })
+  }
+
+  commandsHelp (content, channel, duration = this.defaultDuration) {
+    channel.send({
+      embed: {
+        title: ':blue_book: __❱❱ ALL COMMANDS ❱❱__',
+        description: `To get specific command help, use **${this.pf}help [command]**`,
+        color: 3530163, // Light Aqua Green
+        fields: content.map(e => {
+          return {
+            name: e.info.fullCommand,
+            value: (e.info.shortDescription) ? e.info.shortDescription : 'This command\'s description has not been written yet because i\'m a lazy whore',
+            inline: true
+          }
+        }),
         footer: this.footer
       }
     }).then(msg => { this._msgDeleter(msg, duration) })
