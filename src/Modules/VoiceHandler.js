@@ -129,7 +129,7 @@ class VoiceHandler {
       this.state.voiceConnection = undefined
       this.state.voiceDispatcher = undefined
       this.state.nowPlaying = undefined
-      this.state.que$ue = []
+      this.state.queue = []
 
       resolve()
     })
