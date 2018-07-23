@@ -36,7 +36,8 @@ exports.handler = async (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'play',
-  fullCommand: 'play <YouTube URL>',
+  alias: [],
+  fullCommand: 'play [YouTube URL]',
   shortDescription: '',
   longDescription: ''
 }

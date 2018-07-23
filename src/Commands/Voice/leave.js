@@ -8,6 +8,7 @@ exports.handler = async (bot, msg, args, guildState) => {
 
 exports.info = {
   command: 'leave',
+  alias: [],
   fullCommand: 'leave',
   shortDescription: '',
   longDescription: ''

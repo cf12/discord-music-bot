@@ -69,7 +69,8 @@ exports.handler = (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'timer',
-  fullCommand: 'timer <add | list | remove>',
+  alias: [],
+  fullCommand: 'timer [add | list | remove]',
   shortDescription: '',
   longDescription: ''
 }

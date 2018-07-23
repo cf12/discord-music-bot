@@ -33,7 +33,8 @@ exports.handler = (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'cmarket',
-  fullCommand: 'cmarket <from> <to>',
+  alias: [],
+  fullCommand: 'cmarket [from] [to]',
   shortDescription: '',
   longDescription: ''
 }

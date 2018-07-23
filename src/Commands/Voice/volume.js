@@ -17,7 +17,8 @@ exports.handler = async (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'volume',
-  fullCommand: 'volume <1 - 100>',
+  alias: [],
+  fullCommand: 'volume [1 - 100]',
   shortDescription: '',
   longDescription: ''
 }

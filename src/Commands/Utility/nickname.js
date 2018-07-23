@@ -17,7 +17,8 @@ exports.handler = (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'nickname',
-  fullCommand: 'nickname <nickname>',
+  alias: [],
+  fullCommand: 'nickname [nickname]',
   shortDescription: '',
   longDescription: ''
 }

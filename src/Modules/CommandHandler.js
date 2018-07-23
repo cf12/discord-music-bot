@@ -22,7 +22,9 @@ class CommandHandler {
   }
 
   getCommand (query) {
-    return this.commands.filter(e => e.info.command === query)[0]
+    return this.commands.filter(e => {
+      return e.info.command === query || e.info.alias.includes(query)
+    })[0]
   }
 
   getCommands () {

@@ -6,6 +6,7 @@ exports.handler = (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'ping',
+  alias: [],
   fullCommand: 'ping',
   shortDescription: 'Pings the bot',
   longDescription: 'Pings the bot for a "Pong!" response'

@@ -14,6 +14,7 @@ exports.handler = (bot, msg, args, guild) => {
 
 exports.info = {
   command: 'skip',
+  alias: [],
   fullCommand: 'skip',
   shortDescription: 'Places a vote to skip the current track (Users with a "DJ" role can override)',
   longDescription: ''
