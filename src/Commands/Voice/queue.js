@@ -7,24 +7,6 @@ exports.handler = async (bot, msg, args, guild) => {
 
   const pageLength = 5
   const queue = guild.voiceState.queue
-  const nowPlaying = guild.voiceState.nowPlaying
-  let data = []
-
-  // Custom titling for currently playing track
-  data.push({
-    name: `NP | ${nowPlaying.title}`,
-    value: `[${nowPlaying.duration.format('d[d] h[h] m[m] s[s]')}] - Uploaded by **${nowPlaying.uploader}** - Requested by ${nowPlaying.requester}`
-  })
-
-  // Numbers & Formats the rest of queue based on embed field format
-  let counter = 2
-  queue.forEach((track) => {
-    data.push({
-      name: `#${counter} | ${track.title}`,
-      value: `[${track.duration.format('d[d] h[h] m[m] s[s]')}] - Uploaded by **${track.uploader}** - Requested by ${track.requester}`
-    })
-    counter++
-  })
 
   // Default embed, when no tracks are queued
   const embed = {
@@ -34,7 +16,26 @@ exports.handler = async (bot, msg, args, guild) => {
   }
 
   // Command logic & result sending
-  if (data.length) {
+  if (guild.voiceState.nowPlaying) {
+    const nowPlaying = guild.voiceState.nowPlaying
+    let data = []
+
+    // Custom titling for currently playing track
+    data.push({
+      name: `NP | ${nowPlaying.title}`,
+      value: `[${nowPlaying.duration.format('d[d] h[h] m[m] s[s]')}] - Uploaded by **${nowPlaying.uploader}** - Requested by ${nowPlaying.requester}`
+    })
+
+    // Numbers & Formats the rest of queue based on embed field format
+    let counter = 2
+    queue.forEach((track) => {
+      data.push({
+        name: `#${counter} | ${track.title}`,
+        value: `[${track.duration.format('d[d] h[h] m[m] s[s]')}] - Uploaded by **${track.uploader}** - Requested by ${track.requester}`
+      })
+      counter++
+    })
+
     const pageNum = args[0] || 1
     const maxPage = Math.ceil(data.length / pageLength)
 
