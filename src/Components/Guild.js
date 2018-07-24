@@ -1,5 +1,6 @@
 const User = require('./User')
 const VoiceHandler = require('../Modules/VoiceHandler')
+const VoteHandler = require('../Modules/VoteHandler')
 
 class Guild {
   constructor (id, bot) {
@@ -14,7 +15,11 @@ class Guild {
       voiceDispatcher: undefined,
       volume: 1,
       nowPlaying: undefined,
-      prevTrack: undefined
+      prevTrack: undefined,
+      voteHandlers: {
+        skip: new VoteHandler(),
+        leave: new VoteHandler()
+      }
     }
 
     this.voiceHandler = new VoiceHandler(this.voiceState, this.bot)

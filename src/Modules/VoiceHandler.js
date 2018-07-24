@@ -1,6 +1,7 @@
 const moment = require('moment')
 const momentDurationFormatSetup = require('moment-duration-format')
 const ytdl = require('ytdl-core')
+const _ = require('lodash')
 
 momentDurationFormatSetup(moment)
 
@@ -79,8 +80,9 @@ class VoiceHandler {
     return new Promise(async (resolve, reject) => {
       const track = this.state.queue.shift()
       const stream = ytdl(track.url)
-
       const dispatcher = await this.state.voiceConnection.playStream(stream)
+
+      this.resetVoteHandlers()
 
       dispatcher.setVolume(this.state.volume)
       this.state.voiceDispatcher = dispatcher
@@ -131,6 +133,8 @@ class VoiceHandler {
       this.state.nowPlaying = undefined
       this.state.queue = []
 
+      this.resetVoteHandlers()
+
       resolve()
     })
   }
@@ -146,11 +150,12 @@ class VoiceHandler {
     })
   }
 
-  async skipTrack (msgChannel) {
-    return new Promise(async (resolve, reject) => {
-      this.ms.info('Skipping track...', msgChannel)
-      this.state.voiceDispatcher.end()
-    })
+  skipTrack () {
+    this.state.voiceDispatcher.end()
+  }
+
+  resetVoteHandlers () {
+    for (const handler of _.values(this.state.voteHandlers)) handler.reset()
   }
 }
 
