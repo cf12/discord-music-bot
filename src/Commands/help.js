@@ -11,8 +11,7 @@ exports.handler = (bot, msg, args, guild) => {
       fields: ch.getCommands().map(e => {
         return {
           name: pf + e.info.fullCommand,
-          value: (e.info.shortDescription) ? e.info.shortDescription : 'This command\'s description has not been written yet because i\'m a lazy whore',
-          inline: true
+          value: (e.info.shortDescription) ? e.info.shortDescription : `[No description]`
         }
       })
     }, msg.channel)

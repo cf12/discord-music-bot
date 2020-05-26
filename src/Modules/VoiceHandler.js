@@ -42,7 +42,7 @@ class VoiceHandler {
 
   async addTrack (id, requester) {
     return new Promise(async (resolve, reject) => {
-      const data = (await this.yh.getVideo(id)).items[0]
+      const data = await this.yh.getVideo(id)
 
       const snippet = data.snippet
       const track = {
