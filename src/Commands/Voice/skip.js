@@ -7,7 +7,7 @@ exports.handler = (bot, msg, args, guild) => {
 
   if (args.length !== 0) return ms.error(`Invalid usage: **${pf}skip**`, msg.channel)
   else if (!guild.voiceState.voiceConnection) return ms.error(`The bot is not in voice!`, msg.channel)
-  else if (!msg.member.voiceChannel || (msg.member.voiceChannel.id !== guild.voiceState.voiceConnection.channel.id)) return ms.error(`You must be in the bot's voice channel!`, msg.channel)
+  else if (!msg.member.voice.channel || (msg.member.voice.channel.id !== guild.voiceState.voiceConnection.channel.id)) return ms.error(`You must be in the bot's voice channel!`, msg.channel)
 
   let embed = {
     title: ':track_next: **❱❱ SKIP VOTE ❱❱**'

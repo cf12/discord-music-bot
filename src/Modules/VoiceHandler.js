@@ -80,7 +80,7 @@ class VoiceHandler {
     return new Promise(async (resolve, reject) => {
       const track = this.state.queue.shift()
       const stream = ytdl(track.url)
-      const dispatcher = await this.state.voiceConnection.playStream(stream)
+      const dispatcher = await this.state.voiceConnection.play(stream)
 
       this.resetVoteHandlers()
 
@@ -109,13 +109,13 @@ class VoiceHandler {
     })
   }
 
-  async joinVoice (voiceChannel) {
+  async joinVoice (vChannel) {
     return new Promise((resolve, reject) => {
-      voiceChannel.join()
+      vChannel.join()
         .then((connection) => {
           this.state.voiceConnection = connection
 
-          this.cl.info(`Joined voice channel: [${voiceChannel.id}] on guild [${voiceChannel.guild.name}]`)
+          this.cl.info(`Joined voice channel: [${vChannel.id}] on guild [${vChannel.guild.name}]`)
           resolve()
         })
         .catch(err => { if (err) reject(err) })

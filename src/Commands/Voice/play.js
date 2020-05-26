@@ -4,8 +4,13 @@ exports.handler = async (bot, msg, args, guild) => {
   const pf = bot.env.prefix
   const vh = guild.voiceHandler
 
-  if (args.length !== 1) return ms.error(`Invalid usage: **${pf}play <url>**`, msg.channel)
-  if (!msg.member.voiceChannel) return ms.error(`${msg.member.toString()}, you must be in a voice channel`, msg.channel)
+  if (args.length !== 1)
+    return ms.error(`Invalid usage: **${pf}play <url>**`, msg.channel)
+  else if (!msg.member.voice.channel)
+    return ms.error(`${msg.member.toString()}, you must be in a voice channel`, msg.channel)
+  else if (!msg.member.voice.channel.joinable)
+    return ms.error(`I don't have permission to join your voice channel!`, msg.channel)
+
 
   guild.setVoiceMsgChannel(msg.channel)
 
@@ -14,7 +19,7 @@ exports.handler = async (bot, msg, args, guild) => {
 
     if (!guild.voiceState.voiceConnection) {
       ms.info(`Joining ${msg.member.toString()}'s voice channel...`, msg.channel)
-      await vh.joinVoice(msg.member.voiceChannel)
+      await vh.joinVoice(msg.member.voice.channel)
     }
 
     if (parsedUrl.type === 'hybrid') return

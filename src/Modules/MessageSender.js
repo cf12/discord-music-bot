@@ -5,7 +5,7 @@ const defaultDuration = 10000
 
 class MessageSender {
   constructor (bot, configs) {
-    this.profilePicUrl = bot.user.avatarURL
+    this.profilePicUrl = bot.user.avatarURL({ size: 32 })
     this.pf = bot.env.prefix
 
     this.footer = {
@@ -15,7 +15,7 @@ class MessageSender {
   }
 
   _msgDeleter (msg, duration) {
-    if (duration > 0) msg.delete(duration)
+    if (duration > 0) msg.delete({ timeout: duration })
   }
 
   customEmbed (embed, channel, duration = defaultDuration) {

@@ -6,24 +6,23 @@
   "author": "CF12 <brianx0011@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "run": "node src/bot.js"
+    "start": "node src/bot.js"
   },
   "dependencies": {
-    "bufferutil": "^3.0.3",
-    "chalk": "^2.3.0",
-    "discord.js": "^11.3.0",
-    "erlpack": "hammerandchisel/erlpack",
-    "gdax": "^0.5.1",
-    "lodash": "^4.17.5",
-    "moment": "^2.20.1",
-    "moment-duration-format": "https://github.com/jsmreese/moment-duration-format",
-    "node-opus": "^0.2.7",
-    "req-fast": "^0.2.17",
-    "time-stamp": "^2.0.0",
-    "uws": "^9.14.0",
-    "ytdl-core": "^0.20.1"
-  },
-  "devDependencies": {
-    "standard": "^10.0.3"
+    "@discordjs/opus": "^0.3.2",
+    "bufferutil": "^4.0.1",
+    "chalk": "^4.0.0",
+    "discord.js": "^12.2.0",
+    "erlpack": "discordapp/erlpack",
+    "gdax": "^0.9.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.26.0",
+    "moment-duration-format": "^2.3.2",
+    "req-fast": "^0.2.19",
+    "sodium": "^3.0.2",
+    "time-stamp": "^2.2.0",
+    "utf-8-validate": "^5.0.2",
+    "ytdl-core": "^2.1.4",
+    "zlib-sync": "^0.1.6"
   }
 }
