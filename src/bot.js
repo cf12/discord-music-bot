@@ -1,10 +1,12 @@
 const Discord = require('discord.js')
-const moduleLoader = require('./Modules/ModuleLoader')
-let bot = new Discord.Client()
 
-const configs = require('./Modules/ConfigLoader')()
-const pf = configs.config.prefix
-bot.login(configs.config.token)
+
+const config = require('../config/config.json')
+const pf = config.prefix
+
+
+let bot = new Discord.Client()
+bot.login(config.token)
 
 let modules
 
@@ -12,12 +14,16 @@ bot.on('ready', () => {
   bot.env = {
     prefix: pf
   }
+  bot.user.setPresence({
+    activity: { name: config.version }
+  })
 
-  modules = bot.modules = moduleLoader.getModules(bot, configs)
-
-  bot.user.setPresence({ game: {
-    name: configs.config.version
-  }})
+  bot.modules = modules = {
+    consoleLogger: new (require('./Modules/ConsoleLogger'))(),
+    commandHandler: new (require('./Modules/CommandHandler'))(),
+    messageSender: new (require('./Modules/MessageSender'))(bot),
+    guildHandler: new (require('./Modules/GuildHandler'))(bot)
+  }
 
   const cl = modules.consoleLogger
   cl.info('Bot started!')

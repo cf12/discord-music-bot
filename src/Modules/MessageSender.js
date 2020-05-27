@@ -1,16 +1,17 @@
-const moment = require('moment')
 const _ = require('lodash')
+
+const config = require('../../config/config.json')
 
 const defaultDuration = 10000
 
 class MessageSender {
-  constructor (bot, configs) {
+  constructor (bot) {
     this.profilePicUrl = bot.user.avatarURL({ size: 32 })
     this.pf = bot.env.prefix
 
     this.footer = {
       icon_url: this.profilePicUrl,
-      text: `| ${configs.config.version} - Developed By CF12`
+      text: `| ${config.version} - Developed By CF12`
     }
   }
 
@@ -89,11 +90,6 @@ class MessageSender {
           {
             name: 'Link',
             value: `https://youtu.be/${content.id}`
-          },
-          {
-            name: 'Tags',
-            value: (content.tags) ? content.tags.join(', ') : '[None]',
-            inline: true
           }
         ],
         footer: this.footer

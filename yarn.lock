@@ -199,10 +199,9 @@ detect-libc@^1.0.3:
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
-discord.js@^12.2.0:
+"discord.js@https://github.com/aidangoettsch/discord.js":
   version "12.2.0"
-  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-12.2.0.tgz#31018732e42a495c92655055192221eab2ad11a9"
-  integrity sha512-Ueb/0SOsxXyqwvwFYFe0msMrGqH1OMqpp2Dpbplnlr4MzcRrFWwsBM9gKNZXPVBHWUKiQkwU8AihXBXIvTTSvg==
+  resolved "https://github.com/aidangoettsch/discord.js#03b04c7d76917d0e6d8b0ef9a8ddb4067628c915"
   dependencies:
     "@discordjs/collection" "^0.1.5"
     "@discordjs/form-data" "^3.0.1"
@@ -278,7 +277,7 @@ has-unicode@^2.0.0:
   resolved "https://registry.yarnpkg.com/has-unicode/-/has-unicode-2.0.1.tgz#e0e6fe6a28cf51138855e086d1691e771de2a8b9"
   integrity sha1-4Ob+aijPUROIVeCG0Wkedx3iqLk=
 
-html-entities@^1.3.1:
+html-entities@^1.1.3, html-entities@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-1.3.1.tgz#fb9a1a4b5b14c5daba82d3e34c6ae4fe701a0e44"
   integrity sha512-rhE/4Z3hIhzHAUKbW8jVcCyuT5oJCXXqhN/6mXXVCpzTmvJnoH2HL/bt3EZ6p55jbFJBeAe1ZNpL5BugLujxNA==
@@ -726,6 +725,20 @@ ytdl-core@^2.1.4:
     m3u8stream "^0.7.1"
     miniget "^1.7.0"
     sax "^1.1.3"
+
+ytpl@^0.1.21:
+  version "0.1.21"
+  resolved "https://registry.yarnpkg.com/ytpl/-/ytpl-0.1.21.tgz#1400c82de872648008db53f8d440d1d4babd2342"
+  integrity sha512-TT8t4eSqkjP8Pvlxl7wgQ6MCCEEdMgJ8rS1gOdkW7GM7A7tuXmsxNK+VSt7HjKVH/iJ5f0S3AfOYczZdx2WExw==
+  dependencies:
+    html-entities "^1.1.3"
+
+ytsr@^0.1.14:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/ytsr/-/ytsr-0.1.14.tgz#4fbea9be3bf93f35390415a00f01ab8539509424"
+  integrity sha512-YlLIDRPVUBOXnBjW6RytxpzC8g5ieqwjzcdrmmgdvTmVD/iisvNBPO5LhqB7R0kbuNHjFW6FBYpCTvCF1gCrHA==
+  dependencies:
+    html-entities "^1.1.3"
 
 zlib-sync@^0.1.6:
   version "0.1.6"

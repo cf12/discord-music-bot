@@ -15,139 +15,97 @@ class VoiceHandler {
     this.state = voiceState
   }
 
-  parseUrl (url) {
-    if (url.includes('youtube.com') && url.includes('watch?v=') && url.includes('&list=')) {
-      return {
-        type: 'hybrid',
-        videoID: url.split('watch?v=')[1].split('#')[0].split('&')[0],
-        playlistID: url.split('&list=')[1].split('#')[0].split('&')[0]
-      }
-    } else if (url.includes('youtube.com') && url.includes('watch?v=')) {
-      return {
-        type: 'video',
-        id: url.split('watch?v=')[1].split('#')[0].split('&')[0]
-      }
-    } else if (url.includes('youtu.be')) {
-      return {
-        type: 'video',
-        id: url.split('be/')[1].split('?')[0]
-      }
-    } else if (url.includes('youtube.com') && url.includes('playlist?list=')) {
-      return {
-        type: 'playlist',
-        id: url.split('playlist?list=')[1]
-      }
-    } else throw new Error('INVALID_LINK')
-  }
 
   async addTrack (id, requester) {
-    return new Promise(async (resolve, reject) => {
-      const data = await this.yh.getVideo(id)
+    const data = await ytdl.getInfo(id)
 
-      const snippet = data.snippet
-      const track = {
-        id: data.id,
-        url: 'http://youtube.com/watch?v=' + data.id,
-        title: snippet.title,
-        description: (snippet.description.length > 180)
-          ? snippet.description.slice(0, 180) + '...'
-          : snippet.description,
-        uploader: snippet.channelTitle,
-        requester: requester.toString(),
-        thumbnail: snippet.thumbnails.high.url,
-        duration: moment.duration(data.contentDetails.duration),
-        tags: snippet.tags
-      }
+    const track = {
+      id: data.video_id,
+      title: data.title,
+      description: (data.description.length > 180)
+        ? data.description.slice(0, 180) + '...'
+        : data.description,
+      uploader: data.author.name,
+      requester: requester.toString(),
+      thumbnail: data.player_response.videoDetails.thumbnail.thumbnails[0].url,
+      duration: moment.duration(data.length_seconds)
+    }
 
-      this.state.queue.push(track)
-      if (!this.state.nowPlaying) {
-        await this.playNextTrack()
-      }
-      resolve()
-    })
+    this.state.queue.push(track)
+    if (!this.state.nowPlaying) {
+      await this.playNextTrack()
+    }
   }
 
   async addPlaylist (id, requester) {
-    return new Promise(async (resolve, reject) => {
-      const playlist = await this.yh.getPlaylist(id)
-      playlist.forEach(e => { this.addTrack(e, requester) })
-
-      resolve()
-    })
+    const playlist = await this.yh.getPlaylist(id)
+    playlist.forEach(e => { this.addTrack(e, requester) })
   }
 
   async playNextTrack () {
-    return new Promise(async (resolve, reject) => {
-      const track = this.state.queue.shift()
-      const stream = ytdl(track.url)
-      const dispatcher = await this.state.voiceConnection.play(stream)
+    const track = this.state.queue.shift()
+    const stream = ytdl(track.id)
 
-      this.resetVoteHandlers()
+    this.state.dispatchers = await this.state.voiceConnection.play(stream, {
+      bitrate: '2M',
+    })
+    const { audio } = this.state.dispatchers
 
-      dispatcher.setVolume(this.state.volume)
-      this.state.voiceDispatcher = dispatcher
+    this.resetVoteHandlers()
 
-      this.ms.youtubeTrackInfo(track, this.state.msgChannel)
-      this.cl.info(`Playing track: [${track.title}] in voice channel [${this.state.voiceConnection.channel.name}]`)
-      this.state.nowPlaying = track
+    audio.setVolume(this.state.volume)
 
-      dispatcher.once('end', () => {
-        this.state.prevTrack = this.state.nowPlaying
+    this.ms.youtubeTrackInfo(track, this.state.msgChannel)
+    this.cl.info(`Playing track: [${track.title}] in voice channel [${this.state.voiceConnection.channel.name}]`)
+    this.state.nowPlaying = track
 
-        if (this.state.queue.length === 0) {
-          this.ms.info('Queue has been emptied. Leaving voice channel...', this.state.msgChannel)
-          this.state.nowPlaying = undefined
-          this.leaveVoice()
-        } else if (this.state.voiceConnection.channel.members.array().length === 1) {
-          this.ms.info('Empty voice channel detected. Leaving voice channel...', this.state.msgChannel)
-          this.state.nowPlaying = undefined
-          this.leaveVoice()
-        } else this.playNextTrack()
-      })
+    audio.once('end', () => {
+      this.state.prevTrack = this.state.nowPlaying
 
-      resolve()
+      if (this.state.queue.length === 0) {
+        this.ms.info('Queue has been emptied. Leaving voice channel...', this.state.msgChannel)
+        this.state.nowPlaying = undefined
+        this.leaveVoice()
+      } else if (this.state.voiceConnection.channel.members.array().length === 1) {
+        this.ms.info('Empty voice channel detected. Leaving voice channel...', this.state.msgChannel)
+        this.state.nowPlaying = undefined
+        this.leaveVoice()
+      } else this.playNextTrack()
     })
   }
 
   async joinVoice (vChannel) {
-    return new Promise((resolve, reject) => {
-      vChannel.join()
-        .then((connection) => {
-          this.state.voiceConnection = connection
-
-          this.cl.info(`Joined voice channel: [${vChannel.id}] on guild [${vChannel.guild.name}]`)
-          resolve()
-        })
-        .catch(err => { if (err) reject(err) })
-    })
+    try {
+      this.state.voiceConnection = await vChannel.join({ video: true, stealthVideo: true })
+      this.cl.info(`Joined voice channel: [${vChannel.id}] on guild [${vChannel.guild.name}]`)
+    } catch (err) { throw new Error(err) }
   }
 
   async leaveVoice () {
-    return new Promise(async (resolve, reject) => {
-      if (!this.state.voiceConnection) reject(new Error('NOT_IN_VOICE'))
+    if (!this.state.voiceConnection) reject(new Error('NOT_IN_VOICE'))
 
-      this.state.voiceDispatcher.removeAllListeners('end')
-      await this.state.voiceConnection.disconnect()
-      this.state.voiceConnection = undefined
-      this.state.voiceDispatcher = undefined
-      this.state.nowPlaying = undefined
-      this.state.queue = []
+    const { audio, video } = this.state.dispatchers
 
-      this.resetVoteHandlers()
+    audio.removeAllListeners('end')
+    await this.state.voiceConnection.disconnect()
 
-      resolve()
-    })
+    this.state.voiceConnection = undefined
+    this.state.dispatchers = undefined
+    this.state.nowPlaying = undefined
+    this.state.queue = []
+
+    this.resetVoteHandlers()
   }
 
   async setVolume (volume) {
-    return new Promise((resolve, reject) => {
-      const convertedVolume = volume * 0.006
+    const convertedVolume = volume * 0.006
 
-      this.state.volume = convertedVolume
-      if (this.state.voiceDispatcher) this.state.voiceDispatcher.setVolumeLogarithmic(convertedVolume)
+    const { audio } = this.state.dispatchers
 
-      resolve(volume)
-    })
+    this.state.volume = convertedVolume
+    if (audio) audio.setVolumeLogarithmic(convertedVolume)
+
+    return volume
   }
 
   skipTrack () {

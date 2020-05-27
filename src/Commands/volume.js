@@ -4,8 +4,10 @@ exports.handler = async (bot, msg, args, guild) => {
   const pf = bot.env.prefix
   const vh = guild.voiceHandler
 
-  if (isNaN(args[0]) || args[0] <= 0 || args[0] > 100) return ms.error('Invalid Volume Input! Value must be between 1 and 100', msg.channel)
-  else if (!msg.member.voice.channel || (msg.member.voice.channel.id !== guild.voiceState.voiceConnection.channel.id)) return ms.error(`You must be in the bot's voice channel!`, msg.channel)
+  if (isNaN(args[0]) || args[0] <= 0 || args[0] > 100)
+    return ms.error('Invalid Volume Input! Value must be between 1 and 100', msg.channel)
+  else if (!msg.member.voice.channel || (msg.member.voice.channel.id !== guild.voiceState.voiceConnection.channel.id))
+    return ms.error(`You must be in the bot's voice channel!`, msg.channel)
 
   try {
     const volume = await vh.setVolume(args[0])

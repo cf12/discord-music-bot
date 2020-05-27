@@ -12,7 +12,7 @@ class Guild {
       queue: [],
       msgChannel: undefined,
       voiceConnection: undefined,
-      voiceDispatcher: undefined,
+      dispatchers: undefined,
       volume: 1,
       nowPlaying: undefined,
       prevTrack: undefined,

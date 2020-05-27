@@ -26,7 +26,7 @@ exports.handler = (bot, msg, args, guild) => {
     const result = tempResults[0]
     const votes = tempResults[1]
 
-    if (msg.member.roles.find(e => e.name.toUpperCase() === 'DJ')) {
+    if (msg.member.roles.cache.find(e => e.name.toUpperCase() === 'DJ')) {
       vh.skipTrack()
 
       embed.description = 'Skipping track... **[DJ\'s request]**'

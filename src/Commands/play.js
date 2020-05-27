@@ -1,48 +1,60 @@
+const ytdl = require('ytdl-core')
+const ytpl = require('ytpl')
+const ytsr = require('ytsr')
+
 exports.handler = async (bot, msg, args, guild) => {
   const ms = bot.modules.messageSender
   const cl = bot.modules.consoleLogger
   const pf = bot.env.prefix
   const vh = guild.voiceHandler
 
-  if (args.length !== 1)
-    return ms.error(`Invalid usage: **${pf}play <url>**`, msg.channel)
+  if (args.length === 0)
+    return ms.error(`Invalid usage: **${pf}play [YouTube URL / Search Query]**`, msg.channel)
   else if (!msg.member.voice.channel)
     return ms.error(`${msg.member.toString()}, you must be in a voice channel`, msg.channel)
   else if (!msg.member.voice.channel.joinable)
     return ms.error(`I don't have permission to join your voice channel!`, msg.channel)
 
 
-  guild.setVoiceMsgChannel(msg.channel)
+  const query = args.join(' ')
+  let track
 
-  try {
-    const parsedUrl = vh.parseUrl(args[0])
+  if (ytdl.validateURL(query)) {
+    track = {
+      type: 'video',
+      id: await ytdl.getVideoID(query)
+    }
+  } else if (ytpl.validateURL(query)) {
+    track = {
+      type: 'playlist',
+      id: await ytpl.getPlaylistID(query)
+    }
+  } else {
+    track = {
+      type: 'video',
+      id: (await ytsr(query, { limit: 1 })).items[0].link
+    }
+  }
 
-    if (!guild.voiceState.voiceConnection) {
-      ms.info(`Joining ${msg.member.toString()}'s voice channel...`, msg.channel)
-      await vh.joinVoice(msg.member.voice.channel)
-    }
+  if (!guild.voiceState.voiceConnection) {
+    guild.setVoiceMsgChannel(msg.channel)
+    ms.info(`Joining ${msg.member.toString()}'s voice channel...`, msg.channel)
+    await vh.joinVoice(msg.member.voice.channel)
+  }
 
-    if (parsedUrl.type === 'hybrid') return
-    else if (parsedUrl.type === 'video') {
-      ms.info(`Video has been queued`, msg.channel)
-      vh.addTrack(parsedUrl.id, msg.member)
-    } else if (parsedUrl.type === 'playlist') {
-      ms.info('Playlist has been queued', msg.channel)
-      vh.addPlaylist(parsedUrl.id, msg.member)
-    }
-  } catch (err) {
-    if (err) {
-      if (err.message === 'INVALID_LINK') ms.error('Invalid link detected! Links must be valid YouTube URLs.', msg.channel)
-      else if (err.message === 'EMPTY_VID') ms.error('Empty video detected!', msg.channel)
-      else cl.error(err)
-    }
+  if (track.type === 'video') {
+    ms.info(`Video has been queued`, msg.channel)
+    vh.addTrack(track.id, msg.member)
+  } else if (track.type === 'playlist') {
+    ms.info('Playlist has been queued', msg.channel)
+    vh.addPlaylist(track.id, msg.member)
   }
 }
 
 exports.info = {
   command: 'play',
   alias: [],
-  fullCommand: 'play [YouTube URL]',
+  fullCommand: 'play [YouTube URL / Search Query]',
   shortDescription: '',
   longDescription: ''
 }
