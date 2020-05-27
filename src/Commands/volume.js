@@ -10,7 +10,7 @@ exports.handler = async (bot, msg, args, guild) => {
     return ms.error(`You must be in the bot's voice channel!`, msg.channel)
 
   try {
-    const volume = await vh.setVolume(args[0])
+    const volume = vh.setVolume(args[0] / 100)
     ms.volInfo(volume, msg.channel)
   } catch (err) {
     if (err) cl.error(err)

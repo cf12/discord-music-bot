@@ -41,4 +41,4 @@ bot.on('message', (msg) => {
   } else modules.messageSender.error('Command not found', msg.channel)
 })
 
-bot.on('debug', console.debug)
+// bot.on('debug', console.debug)

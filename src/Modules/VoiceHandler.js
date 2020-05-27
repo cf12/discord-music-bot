@@ -10,7 +10,6 @@ class VoiceHandler {
     const modules = bot.modules
 
     this.cl = modules.consoleLogger
-    this.yh = modules.youtubeHandler
     this.ms = modules.messageSender
     this.state = voiceState
   }
@@ -44,6 +43,11 @@ class VoiceHandler {
 
   async playNextTrack () {
     const track = this.state.queue.shift()
+
+    this.ms.youtubeTrackInfo(track, this.state.msgChannel)
+    this.cl.info(`Playing track: [${track.title}] in voice channel [${this.state.voiceConnection.channel.name}]`)
+    this.state.nowPlaying = track
+
     const videoStream = ytdl(track.id, { quality: "highestvideo" })
     const audioStream = await ytdlDiscord(track.id)
 
@@ -59,10 +63,6 @@ class VoiceHandler {
     this.resetVoteHandlers()
 
     audio.setVolume(this.state.volume)
-
-    this.ms.youtubeTrackInfo(track, this.state.msgChannel)
-    this.cl.info(`Playing track: [${track.title}] in voice channel [${this.state.voiceConnection.channel.name}]`)
-    this.state.nowPlaying = track
 
     audio.once('end', () => {
       this.state.prevTrack = this.state.nowPlaying
@@ -102,22 +102,19 @@ class VoiceHandler {
     this.resetVoteHandlers()
   }
 
-  async setVolume (volume) {
-    const convertedVolume = volume * 0.006
-
+  setVolume (volume) {
     const { audio } = this.state.dispatchers
-
-    this.state.volume = convertedVolume
-    if (audio) audio.setVolumeLogarithmic(convertedVolume)
-
+    if (audio) audio.setVolume(volume)
     return volume
   }
 
-  skipTrack () {
+  async skipTrack () {
     const { player, videoPlayer } = this.state.voiceConnection
 
     player.destroy()
     videoPlayer.destroy()
+
+    if (this.state.queue.length > 0) await this.playNextTrack()
   }
 
   resetVoteHandlers () {

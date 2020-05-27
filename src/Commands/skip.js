@@ -1,4 +1,4 @@
-exports.handler = (bot, msg, args, guild) => {
+exports.handler = async (bot, msg, args, guild) => {
   const ms = bot.modules.messageSender
   const cl = bot.modules.consoleLogger
   const vh = guild.voiceHandler
@@ -27,12 +27,12 @@ exports.handler = (bot, msg, args, guild) => {
     const votes = tempResults[1]
 
     if (msg.member.roles.cache.find(e => e.name.toUpperCase() === 'DJ')) {
-      vh.skipTrack()
+      await vh.skipTrack()
 
       embed.description = 'Skipping track... **[DJ\'s request]**'
       embed.color = parseInt('0x00ff6e')
     } else if (result === 'PASSING') {
-      vh.skipTrack()
+      await vh.skipTrack()
 
       embed.description = `Skipping track... **[${votes} / ${total}]**`
       embed.color = parseInt('0x00ff6e')

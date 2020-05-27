@@ -44,10 +44,10 @@ exports.handler = async (bot, msg, args, guild) => {
 
   if (track.type === 'video') {
     ms.info(`Video has been queued`, msg.channel)
-    vh.addTrack(track.id, msg.member)
+    await vh.addTrack(track.id, msg.member)
   } else if (track.type === 'playlist') {
     ms.info('Playlist has been queued', msg.channel)
-    vh.addPlaylist(track.id, msg.member)
+    await vh.addPlaylist(track.id, msg.member)
   }
 }
 
