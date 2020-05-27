@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 const config = require('../../config/config.json')
 
 const defaultDuration = 10000
@@ -20,7 +18,7 @@ class MessageSender {
   }
 
   customEmbed (embed, channel, duration = defaultDuration) {
-    const payload = _.merge(embed, { footer: this.footer })
+    const payload = Object.assign(embed, { footer: this.footer })
 
     channel.send({ embed: payload })
     .then(msg => { this._msgDeleter(msg, duration) })

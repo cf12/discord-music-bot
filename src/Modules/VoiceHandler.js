@@ -1,7 +1,6 @@
 const moment = require('moment')
 const momentDurationFormatSetup = require('moment-duration-format')
 const ytdl = require('ytdl-core')
-const _ = require('lodash')
 
 momentDurationFormatSetup(moment)
 
@@ -109,11 +108,14 @@ class VoiceHandler {
   }
 
   skipTrack () {
-    this.state.voiceDispatcher.end()
+    const { player, videoPlayer } = this.state.voiceConnection
+
+    player.destroy()
+    videoPlayer.destroy()
   }
 
   resetVoteHandlers () {
-    for (const handler of _.values(this.state.voteHandlers)) handler.reset()
+    Object.values(this.state.voteHandlers).forEach(handler => handler.reset())
   }
 }
 
