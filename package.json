@@ -22,6 +22,7 @@
     "time-stamp": "^2.2.0",
     "utf-8-validate": "^5.0.2",
     "ytdl-core": "^2.1.4",
+    "ytdl-core-discord": "^1.2.0",
     "ytpl": "^0.1.21",
     "ytsr": "^0.1.14",
     "zlib-sync": "^0.1.6"

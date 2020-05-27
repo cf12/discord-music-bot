@@ -1,9 +1,7 @@
 const Discord = require('discord.js')
 
-
 const config = require('../config/config.json')
 const pf = config.prefix
-
 
 let bot = new Discord.Client()
 bot.login(config.token)
@@ -42,3 +40,5 @@ bot.on('message', (msg) => {
     cmd.handler(bot, msg, baseArgs, guildState)
   } else modules.messageSender.error('Command not found', msg.channel)
 })
+
+bot.on('debug', console.debug)

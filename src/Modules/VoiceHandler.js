@@ -1,6 +1,7 @@
 const moment = require('moment')
 const momentDurationFormatSetup = require('moment-duration-format')
 const ytdl = require('ytdl-core')
+const ytdlDiscord = require('ytdl-core-discord')
 const _ = require('lodash')
 
 momentDurationFormatSetup(moment)
@@ -44,11 +45,16 @@ class VoiceHandler {
 
   async playNextTrack () {
     const track = this.state.queue.shift()
-    const stream = ytdl(track.id)
+    const videoStream = ytdl(track.id, { quality: "highestvideo" })
+    const audioStream = await ytdlDiscord(track.id)
 
-    this.state.dispatchers = await this.state.voiceConnection.play(stream, {
-      bitrate: '2M',
-    })
+    this.state.dispatchers = {
+      audio: await this.state.voiceConnection.play(audioStream, {type: "opus"}),
+      video: await this.state.voiceConnection.playVideo(videoStream, {
+        bitrate: '4M',
+        audio: false
+      })
+    }
     const { audio } = this.state.dispatchers
 
     this.resetVoteHandlers()
