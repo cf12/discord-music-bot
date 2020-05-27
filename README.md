@@ -1,1 +1,1 @@
-# discord-guild-bot
+# discord-music-bot
