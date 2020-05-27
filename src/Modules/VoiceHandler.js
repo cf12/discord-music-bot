@@ -46,7 +46,7 @@ class VoiceHandler {
     const track = this.state.queue.shift()
     const stream = ytdl(track.id)
 
-    this.state.dispatchers = await this.state.voiceConnection.play(stream, {
+    this.state.dispatchers = await this.state.voiceConnection.playVideo(stream, {
       bitrate: '2M',
     })
     const { audio } = this.state.dispatchers
