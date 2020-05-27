@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 exports.handler = async (bot, msg, args, guild) => {
   const cl = bot.modules.consoleLogger
   const ms = bot.modules.messageSender
