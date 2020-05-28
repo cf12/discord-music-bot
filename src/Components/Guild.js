@@ -3,11 +3,12 @@ const VoiceHandler = require('../Modules/VoiceHandler')
 const VoteHandler = require('../Modules/VoteHandler')
 
 class Guild {
-  constructor (id, bot) {
+  constructor (id, bot, videoConfig) {
     this.bot = bot
     this.id = id
     this.users = {}
     this.timers = {}
+    this.videoConfig = videoConfig
     this.voiceState = {
       queue: [],
       msgChannel: undefined,
@@ -22,7 +23,7 @@ class Guild {
       }
     }
 
-    this.voiceHandler = new VoiceHandler(this.voiceState, this.bot)
+    this.voiceHandler = new VoiceHandler(this.voiceState, this.bot, this.videoConfig)
   }
 
   addUser (id) {

@@ -20,7 +20,7 @@ bot.on('ready', () => {
     consoleLogger: new (require('./Modules/ConsoleLogger'))(),
     commandHandler: new (require('./Modules/CommandHandler'))(),
     messageSender: new (require('./Modules/MessageSender'))(bot),
-    guildHandler: new (require('./Modules/GuildHandler'))(bot)
+    guildHandler: new (require('./Modules/GuildHandler'))(bot, config.video)
   }
 
   const cl = modules.consoleLogger

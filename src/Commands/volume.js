@@ -6,7 +6,9 @@ exports.handler = async (bot, msg, args, guild) => {
 
   if (isNaN(args[0]) || args[0] <= 0 || args[0] > 100)
     return ms.error('Invalid Volume Input! Value must be between 1 and 100', msg.channel)
-  else if (!msg.member.voice.channel || (msg.member.voice.channel.id !== guild.voiceState.voiceConnection.channel.id))
+  else if (!guild.voiceState.voiceConnection)
+    return ms.error(`The bot must be in a voice channel!`, msg.channel)
+  else if (!msg.member.voice || !msg.member.voice.channel || (msg.member.voice.channel.id !== guild.voiceState.voiceConnection.channel.id))
     return ms.error(`You must be in the bot's voice channel!`, msg.channel)
 
   try {

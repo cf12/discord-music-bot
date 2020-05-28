@@ -6,17 +6,38 @@ const ytdlDiscord = require('ytdl-core-discord')
 momentDurationFormatSetup(moment)
 
 class VoiceHandler {
-  constructor (voiceState, bot) {
+  constructor (voiceState, bot, videoConfig) {
     const modules = bot.modules
 
     this.cl = modules.consoleLogger
     this.ms = modules.messageSender
     this.state = voiceState
+    this.videoConfig = videoConfig
   }
 
 
   async addTrack (id, requester) {
     const data = await ytdl.getInfo(id)
+    let highestRes = Math.max.apply(Math, data.formats.map(format => format.width || 0))
+    let highestFrameRate = Math.max.apply(Math, data.formats.map(format => format.fps || 0))
+    let highest = {
+      height: (highestRes >= 720 ? 720 : highestRes) - 1,
+      fake: true
+    }
+    const livestream = data.formats.some(f => f.live)
+    for (const format of data.formats) {
+      if (!format.height && format.qualityLabel) format.height = parseInt(format.qualityLabel.slice(0, format.qualityLabel.indexOf("p")))
+      if (
+        format.audioBitrate &&
+        format.height > highest.height &&
+        format.height <= this.videoConfig.resolutionMax &&
+        !format.qualityLabel.includes("HDR") &&
+        (format.fps === highestFrameRate || livestream) &&
+        (livestream === format.live)
+    ) {
+        highest = format
+      }
+    }
 
     const track = {
       id: data.video_id,
@@ -27,7 +48,28 @@ class VoiceHandler {
       uploader: data.author.name,
       requester: requester.toString(),
       thumbnail: data.player_response.videoDetails.thumbnail.thumbnails[0].url,
-      duration: moment.duration(data.length_seconds)
+      duration: moment.duration(parseInt(data.length_seconds)),
+      highestFrameRate,
+      livestream
+    }
+    if (!highest.fake) track.format = highest
+    else {
+      let optimal = {
+        height: (highestRes >= 720 ? 720 : highestRes) - 1,
+        fake: true
+      }
+      for (const format of data.formats) {
+        if (
+          format.height > optimal.height &&
+          format.height <= this.videoConfig.resolutionMax &&
+          !format.qualityLabel.includes("HDR") &&
+          (format.fps === highestFrameRate || livestream) &&
+          (livestream === format.live)
+        ) {
+          optimal = format
+        }
+      }
+      if (!optimal.fake) track.format = optimal
     }
 
     this.state.queue.push(track)
@@ -46,25 +88,35 @@ class VoiceHandler {
 
     this.ms.youtubeTrackInfo(track, this.state.msgChannel)
     this.cl.info(`Playing track: [${track.title}] in voice channel [${this.state.voiceConnection.channel.name}]`)
-    this.state.nowPlaying = track
-
-    const videoStream = ytdl(track.id, { quality: "highestvideo" })
-    const audioStream = await ytdlDiscord(track.id)
-
-    this.state.dispatchers = {
-      audio: await this.state.voiceConnection.play(audioStream, {type: "opus"}),
-      video: await this.state.voiceConnection.playVideo(videoStream, {
-        bitrate: '4M',
-        audio: false
-      })
-    }
-    const { audio } = this.state.dispatchers
 
     this.resetVoteHandlers()
+    this.state.nowPlaying = track
 
-    audio.setVolume(this.state.volume)
+    if (track.format) {
+      this.cl.info(`Selected format: ${track.format.qualityLabel} ${track.format.width}x${track.format.height} ${track.format.fps} fps audio bitrate: ${track.format.audioBitrate} live: ${track.format.live}`)
+    }
 
-    audio.once('end', () => {
+    if (track.format && track.format.audioBitrate) {
+      this.state.dispatchers = await this.state.voiceConnection.playVideo(ytdl(track.id, {format: track.format}), {
+        bitrate: this.videoConfig.bitrate,
+        useNvenc: this.videoConfig.useNvenc,
+      })
+    } else {
+      const videoStream = track.format ? ytdl(track.id, {format: track.format})
+        : ytdl(track.id, {filter: format => (format.height || 0) <= this.videoConfig.resolutionMax && format.live === track.livestream})
+      const audioStream = await ytdlDiscord(track.id)
+
+      this.state.dispatchers = await this.state.voiceConnection.playVideo(videoStream, {
+        bitrate: this.videoConfig.bitrate,
+        useNvenc: this.videoConfig.useNvenc,
+        audio: false,
+      })
+
+      this.state.dispatchers.audio = await this.state.voiceConnection.play(audioStream, {type: "opus"})
+    }
+    this.state.dispatchers.audio.setVolume(this.state.volume)
+
+    this.state.voiceConnection.videoPlayer.once('finish', () => {
       this.state.prevTrack = this.state.nowPlaying
 
       if (this.state.queue.length === 0) {
