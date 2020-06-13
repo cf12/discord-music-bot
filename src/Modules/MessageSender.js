@@ -78,7 +78,7 @@ class MessageSender {
           },
           {
             name: 'Duration',
-            value: content.duration.format('d[d:]h[h:]m[m:]s[s]'),
+            value: content.duration.format('d[d] h[h] m[m] s[s]'),
             inline: true
           },
           {

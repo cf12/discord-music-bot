@@ -6,15 +6,15 @@ const ytdlDiscord = require('ytdl-core-discord')
 momentDurationFormatSetup(moment)
 
 class VoiceHandler {
-  constructor (voiceState, bot, videoConfig) {
+  constructor (voiceState, bot, videoClient, videoConfig) {
     const modules = bot.modules
 
     this.cl = modules.consoleLogger
     this.ms = modules.messageSender
     this.state = voiceState
+    this.videoClient = videoClient
     this.videoConfig = videoConfig
   }
-
 
   async addTrack (id, requester) {
     const data = await ytdl.getInfo(id)
@@ -39,16 +39,17 @@ class VoiceHandler {
       }
     }
 
+    const description = data.videoDetails.shortDescription
     const track = {
-      id: data.video_id,
-      title: data.title,
-      description: (data.description.length > 180)
-        ? data.description.slice(0, 180) + '...'
-        : data.description,
-      uploader: data.author.name,
+      id: data.videoDetails.videoId,
+      title: data.videoDetails.title,
+      description: (description.length > 180)
+        ? description.slice(0, 180) + '...'
+        : description,
+      uploader: data.videoDetails.author.name,
       requester: requester.toString(),
       thumbnail: data.player_response.videoDetails.thumbnail.thumbnails[0].url,
-      duration: moment.duration(parseInt(data.length_seconds)),
+      duration: moment.duration(parseInt(data.videoDetails.lengthSeconds), "seconds"),
       highestFrameRate,
       livestream
     }
@@ -97,14 +98,24 @@ class VoiceHandler {
     }
 
     if (track.format && track.format.audioBitrate) {
-      this.state.dispatchers = await this.state.voiceConnection.playVideo(ytdl(track.id, {format: track.format}), {
+      this.state.dispatchers = await this.state.voiceConnection.playVideo(ytdl(track.id, {
+        format: track.format,
+        liveBuffer: this.videoConfig.liveBuffer
+      }), {
         bitrate: this.videoConfig.bitrate,
         useNvenc: this.videoConfig.useNvenc,
+        audioDelay: this.videoConfig.coupledAudioDelay
       })
+      this.state.dispatchers.audio.setVolume(this.state.volume)
     } else {
-      const videoStream = track.format ? ytdl(track.id, {format: track.format})
-        : ytdl(track.id, {filter: format => (format.height || 0) <= this.videoConfig.resolutionMax && format.live === track.livestream})
-      const audioStream = await ytdlDiscord(track.id)
+      const videoStream = ytdl(track.id, {...(track.format ? {
+          format: track.format
+        } : {
+          filter: format => (format.height || 0) <= this.videoConfig.resolutionMax && format.live === track.livestream
+        }),
+        liveBuffer: 0
+      })
+      const audioStream = await ytdl(track.id, { filter: 'audioonly' })
 
       this.state.dispatchers = await this.state.voiceConnection.playVideo(videoStream, {
         bitrate: this.videoConfig.bitrate,
@@ -112,9 +123,12 @@ class VoiceHandler {
         audio: false,
       })
 
-      this.state.dispatchers.audio = await this.state.voiceConnection.play(audioStream, {type: "opus"})
+
+      setTimeout(async () => {
+        this.state.dispatchers.audio = await this.state.voiceConnection.play(audioStream)
+        this.state.dispatchers.audio.setVolume(this.state.volume)
+      }, this.videoConfig.separateAudioDelay)
     }
-    this.state.dispatchers.audio.setVolume(this.state.volume)
 
     this.state.voiceConnection.videoPlayer.once('finish', () => {
       this.state.prevTrack = this.state.nowPlaying
@@ -133,13 +147,14 @@ class VoiceHandler {
 
   async joinVoice (vChannel) {
     try {
-      this.state.voiceConnection = await vChannel.join({ video: true, stealthVideo: true })
+      const videoClientChannel = this.videoClient.channels.resolve(vChannel.id)
+      this.state.voiceConnection = await videoClientChannel.join({ video: true, audioDelay: 3000 })
       this.cl.info(`Joined voice channel: [${vChannel.id}] on guild [${vChannel.guild.name}]`)
     } catch (err) { throw new Error(err) }
   }
 
   async leaveVoice () {
-    if (!this.state.voiceConnection) reject(new Error('NOT_IN_VOICE'))
+    if (!this.state.voiceConnection) return
 
     const { audio, video } = this.state.dispatchers
 
@@ -165,8 +180,6 @@ class VoiceHandler {
 
     player.destroy()
     videoPlayer.destroy()
-
-    if (this.state.queue.length > 0) await this.playNextTrack()
   }
 
   resetVoteHandlers () {

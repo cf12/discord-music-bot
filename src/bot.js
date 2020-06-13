@@ -5,6 +5,8 @@ const pf = config.prefix
 
 let bot = new Discord.Client()
 bot.login(config.token)
+const videoClient = new Discord.Client({_tokenType: 'Bearer'});
+videoClient.login(config.videoToken)
 
 let modules
 
@@ -20,7 +22,8 @@ bot.on('ready', () => {
     consoleLogger: new (require('./Modules/ConsoleLogger'))(),
     commandHandler: new (require('./Modules/CommandHandler'))(),
     messageSender: new (require('./Modules/MessageSender'))(bot),
-    guildHandler: new (require('./Modules/GuildHandler'))(bot, config.video)
+    guildHandler: new (require('./Modules/GuildHandler'))(bot, videoClient, config.video),
+    siteManager: new (require('./sites/SiteManager'))(config.video.resolutionMax, config.video.resolutionSoftMin)
   }
 
   const cl = modules.consoleLogger
@@ -42,3 +45,4 @@ bot.on('message', (msg) => {
 })
 
 // bot.on('debug', console.debug)
+// videoClient.on('debug', console.debug)

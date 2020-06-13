@@ -9,7 +9,7 @@ exports.handler = async (bot, msg, args, guild) => {
   const vh = guild.voiceHandler
 
   if (args.length === 0)
-    return ms.error(`Invalid usage: **${pf}play [YouTube URL / Search Query]**`, msg.channel)
+    return ms.error(`Invalid usage: **${pf}play [URL / Search Query]**`, msg.channel)
   else if (!msg.member.voice.channel)
     return ms.error(`${msg.member.toString()}, you must be in a voice channel`, msg.channel)
   else if (!msg.member.voice.channel.joinable)
@@ -30,9 +30,15 @@ exports.handler = async (bot, msg, args, guild) => {
       id: await ytpl.getPlaylistID(query)
     }
   } else {
+    const search = await ytsr(query, { limit: 1 })
+    if (!search.items || !search.items[0] || !search.items[0].link) {
+      ms.error(`Couldn't find a video from the search query "${query}"`, msg.channel)
+      return
+    }
+
     track = {
       type: 'video',
-      id: (await ytsr(query, { limit: 1 })).items[0].link
+      id: search.items[0].link
     }
   }
 

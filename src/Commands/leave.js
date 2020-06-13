@@ -15,6 +15,10 @@ exports.handler = (bot, msg, args, guild) => {
     embed.color = parseInt('0xff2e00')
   } else {
     voteHandler.addVoter(msg.author.id)
+    if (!voiceState.voiceConnection) {
+      ms.error("Not yet connected to voice", msg.channel)
+      return
+    }
     const voiceMembers = voiceState.voiceConnection.channel.members.map((member) => member.id)
     const total = voiceMembers.length - 1
     const tempResults = voteHandler.getResults(voiceMembers, total)
