@@ -1,4 +1,4 @@
-FROM jrottenberg/ffmpeg:4.1-nvidia
+FROM node:14.4.0-stretch
 
 USER root
 RUN groupadd -r app && useradd --no-log-init -r -g app app
@@ -8,10 +8,7 @@ COPY ./yarn.lock /home/app/yarn.lock
 COPY ./src /home/app/src
 COPY ./config /home/app/config
 RUN apt-get update
-RUN apt-get -y install git curl gnupg build-essential libtool autoconf
-RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
-RUN apt-get -y install nodejs
-RUN npm install -g yarn
+RUN apt-get -y install ffmpeg
 RUN yarn
 
 USER app
