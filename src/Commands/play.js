@@ -5,6 +5,7 @@ const ytsr = require('ytsr')
 exports.handler = async (bot, msg, args, guild) => {
   const ms = bot.modules.messageSender
   const cl = bot.modules.consoleLogger
+  const sm = bot.modules.siteManager
   const pf = bot.env.prefix
   const vh = guild.voiceHandler
 
@@ -15,31 +16,14 @@ exports.handler = async (bot, msg, args, guild) => {
   else if (!msg.member.voice.channel.joinable)
     return ms.error(`I don't have permission to join your voice channel!`, msg.channel)
 
-
   const query = args.join(' ')
   let track
-
-  if (ytdl.validateURL(query)) {
-    track = {
-      type: 'video',
-      id: await ytdl.getVideoID(query)
-    }
-  } else if (ytpl.validateURL(query)) {
-    track = {
-      type: 'playlist',
-      id: await ytpl.getPlaylistID(query)
-    }
-  } else {
-    const search = await ytsr(query, { limit: 1 })
-    if (!search.items || !search.items[0] || !search.items[0].link) {
-      ms.error(`Couldn't find a video from the search query "${query}"`, msg.channel)
-      return
-    }
-
-    track = {
-      type: 'video',
-      id: search.items[0].link
-    }
+  try {
+    track = await sm.getVideo(query)
+    if (!track) ms.error("Cannot handle video from this site", msg.channel)
+  } catch (e) {
+    ms.error(e.message, msg.channel)
+    return
   }
 
   if (!guild.voiceState.voiceConnection) {
@@ -48,12 +32,25 @@ exports.handler = async (bot, msg, args, guild) => {
     await vh.joinVoice(msg.member.voice.channel)
   }
 
-  if (track.type === 'video') {
-    ms.info(`Video has been queued`, msg.channel)
-    await vh.addTrack(track.id, msg.member)
-  } else if (track.type === 'playlist') {
-    ms.info('Playlist has been queued', msg.channel)
-    await vh.addPlaylist(track.id, msg.member)
+  switch (track.type) {
+    case "video":
+      vh.addTrack(track, msg.member)
+      ms.info(`Video has been queued`, msg.channel)
+      break
+    case "playlist":
+      track.videos.forEach(v => vh.addTrack(v,  msg.member))
+      ms.info('Playlist has been queued', msg.channel)
+      break
+    case "search":
+      try {
+        const {video, user} = await ms.search(track, msg.channel)
+        vh.addTrack(video, user)
+      } catch (e) {
+        ms.error(e.message, msg.channel)
+      }
+      break
+    default:
+      ms.error("Unknown type of video")
   }
 }
 

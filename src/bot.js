@@ -23,7 +23,7 @@ bot.on('ready', () => {
     commandHandler: new (require('./Modules/CommandHandler'))(),
     messageSender: new (require('./Modules/MessageSender'))(bot),
     guildHandler: new (require('./Modules/GuildHandler'))(bot, videoClient, config.video),
-    siteManager: new (require('./sites/SiteManager'))(config.video.resolutionMax, config.video.resolutionSoftMin)
+    siteManager: new (require('./sites/SiteManager'))(config.video)
   }
 
   const cl = modules.consoleLogger
@@ -44,5 +44,5 @@ bot.on('message', (msg) => {
   } else modules.messageSender.error('Command not found', msg.channel)
 })
 
-// bot.on('debug', console.debug)
-// videoClient.on('debug', console.debug)
+bot.on('debug', console.debug)
+videoClient.on('debug', console.debug)

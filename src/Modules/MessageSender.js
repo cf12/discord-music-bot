@@ -1,6 +1,8 @@
 const config = require('../../config/config.json')
 
-const defaultDuration = 10000
+const defaultDuration = 0
+const numberEmojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]
+const numberEmojiNames = ["one", "two", "three", "four", "five"]
 
 class MessageSender {
   constructor (bot) {
@@ -61,24 +63,24 @@ class MessageSender {
     channel.send({
       embed: {
         title: content.title,
-        description: content.description,
+        description: content.description.length > 180 ? content.description.slice(0, 180) + "..." : content.description,
         color: 14038325, // Light Red
         author: {
           name: 'Now Playing - YouTube™ Video',
           icon_url: this.profilePicUrl
         },
         thumbnail: {
-          url: content.thumbnail
+          url: content.thumbnailUrl
         },
         fields: [
           {
             name: 'Uploaded By:',
-            value: content.uploader,
+            value: content.author,
             inline: true
           },
           {
             name: 'Duration',
-            value: content.duration.format('d[d] h[h] m[m] s[s]'),
+            value: content.duration.format ? content.duration.format('d[d] h[h] m[m] s[s]') : content.duration,
             inline: true
           },
           {
@@ -93,6 +95,48 @@ class MessageSender {
         footer: this.footer
       }
     }).then(msg => { this._msgDeleter(msg, duration) })
+  }
+
+  search (searchInfo, channel, timeout = 10000) {
+    return channel.send({
+      embed: {
+        title: `YouTube videos matching "${searchInfo.query}"`,
+        description: searchInfo.results.map((r, i) => `:${numberEmojiNames[i]}: ${r.title}`).join("\n\n"),
+          // + (searchInfo.nextPage ? "\n\n:fast_forward: More results" : ""),
+        color: 14038325, // Light Red
+        author: {
+          name: 'Search Results',
+          icon_url: this.profilePicUrl
+        },
+        footer: this.footer
+      }
+    }).then(msg => new Promise((resolve, reject) => {
+      msg.react(numberEmojis[0])
+        .then(() => msg.react(numberEmojis[1]))
+        .then(() => msg.react(numberEmojis[2]))
+        .then(() => msg.react(numberEmojis[3]))
+        // .then(() => searchInfo.nextPage ? msg.react("⏩") : {})
+        .catch(reject)
+
+      const reactionFilter = (reaction, user) => {
+        return numberEmojis.includes(reaction.emoji.name) && !user.bot
+      };
+
+      const collector = msg.createReactionCollector(reactionFilter, {time: timeout})
+
+      collector.on('collect', (reaction, user) => {
+        const index = numberEmojis.indexOf(reaction.emoji.name)
+        resolve({
+          video: searchInfo.results[index].video,
+          user
+        })
+      })
+
+      collector.on('end', collected => {
+        if (collected.size === 0) reject(new Error("No response to search"))
+        msg.delete()
+      })
+    }))
   }
 }
 

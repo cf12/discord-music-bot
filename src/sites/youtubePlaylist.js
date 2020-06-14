@@ -1,17 +1,19 @@
-const ytdl = require('ytdl-core')
 const ytpl = require('ytpl')
+const youtube = require('./youtube')
 
-exports.getVideo = (url) => {
+exports.getVideo = async (url, videoConfig) => {
+  if (!ytpl.validateURL(url)) return false
+  const playlist = await ytpl(url)
+  const videos = await Promise.all(playlist.items.map(
+    v => youtube.getVideo(v.url_simple, videoConfig)
+  ))
+  for (const v of videos) {
+    if (!v) throw new Error("Could not download a video in the playlist")
+  }
+
   return {
-    title: "",
-    description: "",
-    author: "",
-    thumbnailUrl: "",
-    duration: "",
-    getStreams: () => ({
-      audio: {},
-      video: {},
-      both: false
-    })
+    type: "playlist",
+    title: playlist.title,
+    videos
   }
 }
