@@ -8,7 +8,7 @@ COPY ./yarn.lock /home/app/yarn.lock
 COPY ./src /home/app/src
 COPY ./config /home/app/config
 RUN apt-get update
-RUN apt-get -y install ffmpeg
+RUN apt-get -y install ffmpeg i965-va-driver
 RUN yarn
 
 USER app
