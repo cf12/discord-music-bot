@@ -5,6 +5,7 @@ class SiteManager {
       require("./youtube"),
       require("./youtubePlaylist"),
       require("./youtubeDl"),
+      require("./rawURL"),
       require("./ytSearch"),
     ]
   }

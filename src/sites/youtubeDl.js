@@ -64,16 +64,16 @@ exports.getVideo = async (url, videoConfig) => {
   console.log(info)
 
   const formats = selectFormat(info.formats, videoConfig.resolutionMax, videoConfig.resolutionSoftMin)
-  const thumbnailUrl = info.thumbnails ? (info.thumbnails.some(t => t.height) ?
+  const thumbnailUrl = (info.thumbnails && info.thumbnails.length > 0) ? (info.thumbnails.some(t => t.height) ?
     info.thumbnails.sort((a, b) => b.height - a.height) :
     info.thumbnails
   )[0].url : ""
 
   return {
     type: "video",
-    title: info.title,
-    description: info.description,
-    author: info.uploader,
+    title: info.title || "",
+    description: info.description || "",
+    author: info.uploader || "",
     thumbnailUrl,
     duration: info.is_live ? "Live" : moment.duration(parseInt(info._duration_raw || "0"), "seconds"),
     getStreams: () => formats.both ? {
