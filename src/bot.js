@@ -26,7 +26,7 @@ bot.on('ready', () => {
     siteManager: new (require('./sites/SiteManager'))(config.video)
   }
 
-  const cl = modules.consoleLogger
+  const cl = bot.modules.consoleLogger
   cl.info('Bot started!')
   cl.info(`Invite Link: https://discordapp.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=bot`)
 })
