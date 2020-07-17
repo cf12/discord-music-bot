@@ -18,7 +18,7 @@ bot.on('ready', () => {
     activity: { name: config.version }
   })
 
-  bot.modules = modules = {
+  bot.modules = {
     consoleLogger: new (require('./Modules/ConsoleLogger'))(),
     commandHandler: new (require('./Modules/CommandHandler'))(),
     messageSender: new (require('./Modules/MessageSender'))(bot),
@@ -35,13 +35,13 @@ bot.on('message', (msg) => {
   if (msg.author.bot || !msg.content.startsWith(pf)) return
 
   const baseCmd = msg.content.split(' ')[0]
-  const cmd = modules.commandHandler.getCommand(baseCmd.slice(pf.length).toLowerCase())
+  const cmd = bot.modules.commandHandler.getCommand(baseCmd.slice(pf.length).toLowerCase())
 
   if (cmd) {
-    const guildState = modules.guildHandler.getGuild(msg.guild.id)
+    const guildState = bot.modules.guildHandler.getGuild(msg.guild.id)
     const baseArgs = msg.content.split(' ').slice(1)
     cmd.handler(bot, msg, baseArgs, guildState)
-  } else modules.messageSender.error('Command not found', msg.channel)
+  } else bot.modules.messageSender.error('Command not found', msg.channel)
 })
 
 bot.on('debug', console.debug)
