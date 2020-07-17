@@ -1,7 +1,6 @@
 const moment = require('moment')
 const momentDurationFormatSetup = require('moment-duration-format')
 const ytdl = require('ytdl-core')
-const ytdlDiscord = require('ytdl-core-discord')
 
 momentDurationFormatSetup(moment)
 
