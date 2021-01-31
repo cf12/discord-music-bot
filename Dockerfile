@@ -12,6 +12,6 @@ RUN yarn
 COPY ./src /home/app/src
 COPY ./config /home/app/config
 
-USER app
+USER app:video
 ENTRYPOINT [ "node" ]
 CMD [ "/home/app/src/bot.js" ]
