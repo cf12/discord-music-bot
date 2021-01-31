@@ -3,3 +3,5 @@ services:
     build: .
     container_name: hydro-bot
     restart: unless-stopped
+    volumes:
+      - /dev/dri/renderD128:/dev/dri/renderD128
