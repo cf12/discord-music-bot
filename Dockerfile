@@ -4,7 +4,7 @@ USER root
 RUN groupadd -r app && useradd --no-log-init -r -g app app
 WORKDIR /home/app
 RUN apt-get update
-RUN apt-get -y install ffmpeg i965-va-driver libva libbva-utils
+RUN apt-get -y install ffmpeg i965-va-driver libva-dev libva-utils
 COPY ./package.json /home/app/package.json
 COPY ./yarn.lock /home/app/yarn.lock
 RUN yarn
