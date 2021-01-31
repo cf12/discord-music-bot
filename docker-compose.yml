@@ -1,0 +1,5 @@
+services:
+  hydro-bot:
+    build: .
+    container_name: hydro-bot
+    restart: unless-stopped
