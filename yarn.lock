@@ -266,7 +266,7 @@ detect-libc@^1.0.3:
 
 "discord.js@https://github.com/aidangoettsch/discord.js":
   version "12.2.0"
-  resolved "https://github.com/aidangoettsch/discord.js#f7573ac5736544d00eb6fac101e01915d766bc2a"
+  resolved "https://github.com/aidangoettsch/discord.js#ddd2f0e915213aed4e3dc78b341fb7dbac24fdf5"
   dependencies:
     "@discordjs/collection" "^0.1.6"
     "@discordjs/form-data" "^3.0.1"

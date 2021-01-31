@@ -55,6 +55,7 @@ class VoiceHandler {
         bitrate: this.videoConfig.bitrate,
         useNvenc: this.videoConfig.useNvenc,
         useVaapi: this.videoConfig.useVaapi,
+        rtBufferSize: this.videoConfig.rtBufferSize,
         audioDelay: this.videoConfig.coupledAudioDelay
       })
       this.state.dispatchers.audio.setVolume(this.state.volume)
@@ -67,6 +68,7 @@ class VoiceHandler {
         bitrate: this.videoConfig.bitrate,
         useNvenc: this.videoConfig.useNvenc,
         useVaapi: this.videoConfig.useVaapi,
+        rtBufferSize: this.videoConfig.rtBufferSize,
         audioDelay: this.videoConfig.separateAudioDelay
       })
 
