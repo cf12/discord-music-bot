@@ -2,9 +2,12 @@ const ytdl = require('ytdl-core')
 const moment = require('moment')
 
 function selectFormat(formats, resolutionMax, resolutionSoftMin) {
-  const livestream = formats.some(f => f.live)
+  const livestream = formats.some(f => f.isLive)
   const highestRes = Math.max.apply(Math, formats.map(format => format.height || 0))
   const highestFrameRate = Math.max.apply(Math, formats.map(format => format.fps || 0))
+
+  console.log(highestRes)
+  console.log(highestFrameRate)
 
   let chosenFormat = {
     height: (highestRes >= resolutionSoftMin ? resolutionSoftMin : highestRes) - 1,
@@ -19,7 +22,7 @@ function selectFormat(formats, resolutionMax, resolutionSoftMin) {
       format.height <= resolutionMax &&
       !format.qualityLabel.includes("HDR") &&
       (format.fps === highestFrameRate || livestream) &&
-      (livestream === format.live)
+      (livestream === format.isLive)
     ) {
       chosenFormat = format
     }
@@ -33,7 +36,7 @@ function selectFormat(formats, resolutionMax, resolutionSoftMin) {
       format.height <= resolutionMax &&
       !format.qualityLabel.includes("HDR") &&
       (format.fps === highestFrameRate || livestream) &&
-      (livestream === format.live)
+      (livestream === format.isLive)
     ) {
       chosenFormat = format
     }
@@ -46,7 +49,7 @@ function selectFormat(formats, resolutionMax, resolutionSoftMin) {
     if (
       format.height > chosenFormat.height &&
       format.height <= resolutionMax &&
-      (livestream === format.live)
+      (livestream === format.isLive)
     ) {
       chosenFormat = format
     }
@@ -60,6 +63,8 @@ exports.getVideo = async (url, videoConfig) => {
   if (!ytdl.validateURL(url)) return false
   const info = await ytdl.getInfo(url)
 
+  console.log(info.formats)
+
   const format = selectFormat(info.formats, videoConfig.resolutionMax, videoConfig.resolutionSoftMin)
   if (!format) throw new Error("Could not find a format for this video")
 
@@ -68,18 +73,28 @@ exports.getVideo = async (url, videoConfig) => {
     liveBuffer: videoConfig.liveBuffer
   }
 
+  console.log(info.videoDetails)
+
   return {
     type: "video",
     title: info.videoDetails.title,
-    description: info.videoDetails.shortDescription,
+    description: info.videoDetails.description,
     author: info.videoDetails.author.name,
     thumbnailUrl: info.player_response.videoDetails.thumbnail.thumbnails[0].url,
     duration: format.live ? "Live" : moment.duration(parseInt(info.videoDetails.lengthSeconds), "seconds"),
+    // getStreams: () => format.audioBitrate ? {
+    //   both: ytdl.downloadFromInfo(info, ytdlOptions)
+    // } : {
+    //   audio: ytdl.downloadFromInfo(info, { filter: 'audioonly' }),
+    //   video: ytdl.downloadFromInfo(info, ytdlOptions)
+    // },
     getStreams: () => format.audioBitrate ? {
-      both: ytdl.downloadFromInfo(info, ytdlOptions)
+      both: format.url
     } : {
-      audio: ytdl.downloadFromInfo(info, { filter: 'audioonly' }),
-      video: ytdl.downloadFromInfo(info, ytdlOptions)
-    }
+      audio: info.formats
+          .filter(f => f.hasAudio && !f.hasVideo)
+          .sort((a, b) => a.audioBitrate - b.audioBitrate)[0].url,
+      video: format.url
+    },
   }
 }

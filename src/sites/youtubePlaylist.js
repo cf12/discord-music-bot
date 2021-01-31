@@ -2,7 +2,7 @@ const ytpl = require('ytpl')
 const youtube = require('./youtube')
 
 exports.getVideo = async (url, videoConfig) => {
-  if (!ytpl.validateURL(url)) return false
+  if (!ytpl.validateID(url)) return false
   const playlist = await ytpl(url)
   const videos = await Promise.all(playlist.items.map(
     v => youtube.getVideo(v.url_simple, videoConfig)

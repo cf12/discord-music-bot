@@ -1,7 +1,3 @@
-const ytdl = require('ytdl-core')
-const ytpl = require('ytpl')
-const ytsr = require('ytsr')
-
 exports.handler = async (bot, msg, args, guild) => {
   const ms = bot.modules.messageSender
   const cl = bot.modules.consoleLogger

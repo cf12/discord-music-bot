@@ -4,8 +4,8 @@ class SiteManager {
     this.sites = [
       require("./youtube"),
       require("./youtubePlaylist"),
-      require("./youtubeDl"),
       require("./rawURL"),
+      require("./youtubeDl"),
       require("./ytSearch"),
     ]
   }

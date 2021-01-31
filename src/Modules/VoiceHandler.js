@@ -63,18 +63,12 @@ class VoiceHandler {
         this.finishTrack()
       })
     } else if (streams.video) {
-      this.state.dispatchers = await this.state.voiceConnection.playVideo(streams.video, {
+      this.state.dispatchers = await this.state.voiceConnection.playVideo(streams, {
         bitrate: this.videoConfig.bitrate,
         useNvenc: this.videoConfig.useNvenc,
         useVaapi: this.videoConfig.useVaapi,
-        audio: false,
+        audioDelay: this.videoConfig.separateAudioDelay
       })
-
-      if (streams.audio)
-        setTimeout(async () => {
-          this.state.dispatchers.audio = await this.state.voiceConnection.play(streams.audio)
-          this.state.dispatchers.audio.setVolume(this.state.volume)
-        }, this.videoConfig.separateAudioDelay)
 
       this.state.voiceConnection.videoPlayer.once('finish', () => {
         this.finishTrack()
