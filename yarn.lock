@@ -259,9 +259,9 @@ detect-libc@^1.0.3:
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
-"discord.js@github:aidangoettsch/discord.js":
+"discord.js@https://github.com/aidangoettsch/discord.js":
   version "12.2.0"
-  resolved "https://codeload.github.com/aidangoettsch/discord.js/tar.gz/21064232f381054f4e96ebc7f13576953fb9af56"
+  resolved "https://github.com/aidangoettsch/discord.js#21064232f381054f4e96ebc7f13576953fb9af56"
   dependencies:
     abort-controller "^3.0.0"
     node-fetch "^2.6.0"
