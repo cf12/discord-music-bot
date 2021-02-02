@@ -266,7 +266,7 @@ detect-libc@^1.0.3:
 
 "discord.js@https://github.com/aidangoettsch/discord.js":
   version "12.2.0"
-  resolved "https://github.com/aidangoettsch/discord.js#dd5775ecadcb11751f40445990122134e340c03b"
+  resolved "https://github.com/aidangoettsch/discord.js#671af7a86593b4aa487f81d6e0133468aeb096b6"
   dependencies:
     "@discordjs/collection" "^0.1.6"
     "@discordjs/form-data" "^3.0.1"
@@ -589,9 +589,9 @@ mimic-fn@^2.1.0:
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
 miniget@^4.0.0, miniget@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/miniget/-/miniget-4.1.0.tgz#018cc1180d2fe4d45ed735ac6bd2ab7224e8bceb"
-  integrity sha512-kzhrNv5L7LlomwGmPGQsLQ2PnT1LeJJWfB0wNFGyv426gEM1gsfziBQmfkr6XOBA8EusZg9nowlNT5CbuKTjZg==
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/miniget/-/miniget-4.2.0.tgz#0004e95536b192d95a7d09f4435d67b9285481d0"
+  integrity sha512-IzTOaNgBw/qEpzkPTE7X2cUVXQfSKbG8w52Emi93zb+Zya2ZFrbmavpixzebuDJD9Ku4ecbaFlC7Y1cEESzQtQ==
 
 minimatch@^3.0.4:
   version "3.0.4"
@@ -1114,16 +1114,16 @@ ytdl-core@4.4.5, ytdl-core@^4.2.1:
     sax "^1.1.3"
 
 ytpl@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/ytpl/-/ytpl-2.0.4.tgz#24188190f627d328146542b6cf093c770ae947b7"
-  integrity sha512-lXm3LvFvs2RixD6PTDay5jXRhaMSo/Upw7P60/FgQFvNrgSYRwMpR3nB1v3scu84R2XcS6kuENhPD2M4x/920A==
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/ytpl/-/ytpl-2.0.5.tgz#c56900bccaf96e289304de647bc861121f61223e"
+  integrity sha512-8hc+f3pijaogj1yoZTCGImMDS4x0ogFPDsx1PefNQ+2EAhJMm1K4brcYT9zpJhPi9SXh+O103pEIHDw3+dAhxA==
   dependencies:
     miniget "^4.1.0"
 
 ytsr@^3.2.3:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/ytsr/-/ytsr-3.2.3.tgz#f8d6f920d2a0bdeb5b525a3d16a0d83a9e602dd9"
-  integrity sha512-9WESmA4zw+TGq8ok+7zQyvkeerFN7byPIcfTTEVpQqCYfQRyUH7jeQH+2z1NltK1cSqhVGvtV2QEw9wlI8uKCg==
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/ytsr/-/ytsr-3.2.4.tgz#acdaaf09cb8a0f1855bda5b79d16792800d9c015"
+  integrity sha512-DyhaGgp1j3szmC2+C+eGnkebauhqowHjbdTbS2h6hXSb8n3Cr6qQzynTqTnO9xF/6WOesgSLG6+Il00hOFQLUg==
   dependencies:
     miniget "^4.1.0"
 
